@@ -26,3 +26,24 @@ resource "aws_route" "private_nat_gateway" {
   destination_cidr_block = "0.0.0.0/0"
   nat_gateway_id = aws_nat_gateway.nat.id
 }
+
+
+resource "aws_security_group" "private_sg" {
+  name        = "${var.prefix}-private-sg"
+  description = "Allow SSH"
+  vpc_id      = aws_vpc.vpc.id
+
+  ingress {
+    from_port = "22"
+    to_port = "22"
+    protocol = "tcp"
+    cidr_blocks = ["${local.my_ip}/32"]
+  }
+
+  egress {
+    from_port        = 0
+    to_port          = 0
+    protocol         = "-1"
+    cidr_blocks      = ["0.0.0.0/0"]
+  }
+}
